@@ -9,11 +9,16 @@
     if(is_user_logged_in()) {
       $output = custom_personal_form_fields();
     } else {
-      $output = '<p style="text-align: center; color: #166529;">Сначала нужно войти :)</p>';
+      $url_login = home_url('/login');
+      $output = '<p class="login-error">Сначала нужно <a href="'. $url_login .'">войти</a></p>';
     }
     return $output;
   }
   add_shortcode('personal_form', 'custom_personal_form');
+
+  function _var( $name , $else=null ) {
+    return isset($_POST[$name]) ? $_POST[$name] : $else;
+  }
 
   // Markup for profile form
   function custom_personal_form_fields() {
@@ -33,15 +38,15 @@
             <div class="p-personal__form-header">
               <label class="form__label">
                 <span class="form__label-text">Фамилия:</span>
-                <input class="form__input" type="text" name="user_surname" required />
+                <input class="form__input" type="text" name="user_surname" value="<?= _var('user_surname'); ?>" required />
               </label>
               <label class="form__label">
                 <span class="form__label-text">Имя:</span>
-                <input class="form__input" type="text" name="user_name" required />
+                <input class="form__input" type="text" name="user_name" value="<?= _var('user_name'); ?>" required />
               </label>
               <label class="form__label">
                 <span class="form__label-text">Отчество:</span>
-                <input class="form__input" type="text" name="user_patronymic" required />
+                <input class="form__input" type="text" name="user_patronymic" value="<?= _var('user_patronymic'); ?>" required />
               </label>
             </div>
 
@@ -52,14 +57,26 @@
                   <div class="form__radios p-personal__form-radios">
                     <div class="form__radio">
                       <label class="form__radio-label">
-                        <input class="form__radio-input" type="radio" name="user_gender" value="man" checked />
+                        <input 
+                          class="form__radio-input" 
+                          type="radio" 
+                          name="user_gender" 
+                          value="man" 
+                          <?php if(isset($_POST['user_gender']) && $_POST['user_gender'] == "man") echo 'checked'; ?>
+                        required>
                         Мужской
                         <span class="form__radio-check"></span>
                       </label>
                     </div>
                     <div class="form__radio">
                       <label class="form__radio-label">
-                        <input class="form__radio-input" type="radio" name="user_gender" value="woman" />
+                        <input 
+                          class="form__radio-input" 
+                          type="radio" 
+                          name="user_gender" 
+                          value="woman"
+                          <?php if(isset($_POST['user_gender']) && $_POST['user_gender'] == "woman") echo 'checked'; ?>
+                        required>
                         Женский
                         <span class="form__radio-check"></span>
                       </label>
@@ -72,14 +89,15 @@
                     class="form__input" 
                     type="tel" 
                     name="user_phone" 
-                    pattern="[0-9]{10,11}"
+                    pattern="(\+?\d[- .]*){7,13}"
+                    value="<?= _var('user_phone'); ?>"
                     placeholder="+7 (_ _ _) _ _ _ - _ _ - _ _ " 
                     required
                   >
                 </label>
                 <label class="form__label">
                   <span class="form__label-text">Укажите место работы:</span>
-                  <input class="form__input" type="text" name="user_work" required />
+                  <input class="form__input" type="text" name="user_work" value="<?= _var('user_work'); ?>" required />
                 </label>
                 <p class="form__item-remark">
                   Необходимо указать название организации полностью (к примеру: ООО «Ресурс», ИП Соловьева Александра Петровна). Если вы не работаете, укажите «не работаю», «студент», «школьник».
@@ -88,70 +106,108 @@
               <div class="form__item p-personal__form-item">
                 <label class="form__label">
                   <span class="form__label-text">Дата рождения:</span>
-                  <input class="form__input" type="date" name="user_dob" required />
+                  <input 
+                    class="form__input" 
+                    type="date" 
+                    name="user_dob" 
+                    value="<?= _var('user_dob'); ?>" 
+                    placeholder="дд.мг.гггг" 
+                    required />
                 </label>
                 <label class="form__label">
                   <span class="form__label-text">Целевая группа:</span>
                   <select class="form__input" name="user_group" required>
-                    <option value="" label="Группа"></option>
                     <option 
-                      value="group_1" 
-                      label="действующие предприниматели">
+                      value="group_1"
+                      <?php if(isset($_POST['user_group']) && $_POST['user_group'] == "group_1") echo 'selected="selected"'; ?>
+                    >
+                      действующие предприниматели
                     </option>
                     <option 
-                      value="group_2" 
-                      label="школьники">
+                      value="group_2"
+                      <?php if(isset($_POST['user_group']) && $_POST['user_group'] == "group_2") echo 'selected="selected"'; ?>
+                    >
+                      школьники
                     </option>
                     <option 
-                      value="group_3" 
-                      label="лица в возрасте до 30 лет, в том числе студенты">
+                      value="group_3"
+                      <?php if(isset($_POST['user_group']) && $_POST['user_group'] == "group_3") echo 'selected="selected"'; ?>
+                    >
+                      лица в возрасте до 30 лет, в том числе студенты
                     </option>
                     <option 
-                      value="group_4" 
-                      label="инвалиды">
+                      value="group_4"
+                      <?php if(isset($_POST['user_group']) && $_POST['user_group'] == "group_4") echo 'selected="selected"'; ?>
+                    >
+                      инвалиды
                     </option>
                     <option 
-                      value="group_5" 
-                      label="выпускники и воспитанники детских домов">
+                      value="group_5"
+                      <?php if(isset($_POST['user_group']) && $_POST['user_group'] == "group_5") echo 'selected="selected"'; ?>
+                    >
+                      выпускники и воспитанники детских домов
                     </option>
                     <option 
                       value="group_6" 
-                      label="женщины">
+                      <?php if(isset($_POST['user_group']) && $_POST['user_group'] == "group_6") echo 'selected="selected"'; ?>
+                    >
+                      женщины
                     </option>
                     <option 
                       value="group_7" 
-                      label="военнослужащие, уволенные в запас">
+                      <?php if(isset($_POST['user_group']) && $_POST['user_group'] == "group_7") echo 'selected="selected"'; ?>
+                    >
+                      военнослужащие, уволенные в запас
                     </option>
                     <option 
                       value="group_8" 
-                      label="лица старше 45 лет">
+                      <?php if(isset($_POST['user_group']) && $_POST['user_group'] == "group_8") echo 'selected="selected"'; ?>
+                    >
+                      лица старше 45 лет
                     </option>
                     <option 
                       value="group_9" 
-                      label="безработные">
+                      <?php if(isset($_POST['user_group']) && $_POST['user_group'] == "group_9") echo 'selected="selected"'; ?>
+                    >
+                      безработные
                     </option>
                     <option 
                       value="group_10" 
-                      label="иная">
+                      <?php if(isset($_POST['user_group']) && $_POST['user_group'] == "group_10") echo 'selected="selected"'; ?>
+                    >
+                      иная
                     </option>
                   </select>
                 </label>
                 <label class="form__label">
                   <span class="form__label-text">Укажите ИНН организации:</span>
-                  <input class="form__input" type="text" name="user_inn" required />
+                  <input 
+                    class="form__input" 
+                    type="text" 
+                    name="user_inn" 
+                    value="<?= _var('user_inn'); ?>"
+                    required />
                 </label>
                 <p class="form__item-remark">
-                  Необходимо указать ИНН организации, в которой вы работаете или являетесь собственником. Если вы не работаете, укажите прочее
+                  Необходимо указать ИНН организации, в которой вы работаете или являетесь собственником. Если вы не работаете, укажите «прочее»
                 </p>
               </div>
             </div>
 
-            <p class="form__remark">Поля, обазательные для заполнения</p>
+            <p class="form__remark">Поля, обязательные для заполнения</p>
             <input 
                 type="hidden" 
                 name="custom_personal_nonce" 
                 value="<?php echo wp_create_nonce('custom-personal-nonce'); ?>"
               >
+
+            <div class="form__radio form__agreement">
+              <div class="form__radio-label form__agreement-label">
+                <!--<input class="form__radio-input" type="radio" name="agreement" value="yes" checked />-->
+                Нажимая кнопку «Сохранить», я принимаю <a class="confshow" href="#">политику конфиденциальности</a> и даю <a class="useragreement" href="#">согласие на обработку персональных данных</a>
+                <!--<span class="form__radio-check"></span>-->
+              </div>
+            </div>
 
             <button 
               class="button form__button" 
@@ -190,6 +246,7 @@
       $user_group      = $_POST["user_group"];
       $user_work       = esc_attr( trim( $_POST["user_work"] ) );
       $user_inn        = esc_attr( trim( $_POST["user_inn"] ) );
+      $user_agreement  = $_POST["agreement"];
 
       if ( !empty($user_surname) ) {
         wp_update_user([
@@ -223,40 +280,7 @@
       }
 
       if ( !empty($user_group) ) {
-        $group;
-        switch ($user_group) {
-          case 'group_1':
-            $group = 'действующие предприниматели';
-            break;
-          case 'group_2':
-            $group = 'школьники';
-            break;
-          case 'group_3':
-            $group = 'лица в возрасте до 30 лет, в том числе студенты';
-            break;
-          case 'group_4':
-            $group = 'инвалиды';
-            break;
-          case 'group_5':
-            $group = 'выпускники и воспитанники детских домов';
-            break;
-          case 'group_6':
-            $group = 'женщины';
-            break;
-          case 'group_7':
-            $group = 'военнослужащие, уволенные в запас';
-            break;
-          case 'group_8':
-            $group = 'лица старше 45 лет';
-            break;
-          case 'group_9':
-            $group = 'безработные';
-            break;
-          case 'group_10':
-            $group = 'иная';
-            break;
-        }
-        update_user_meta( $current_user->ID, 'c_group', $group );
+        update_user_meta( $current_user->ID, 'c_group', $user_group );
       }
 
       if ( !empty($user_work) ) {
@@ -266,6 +290,10 @@
       if ( !empty($user_inn) ) {
         update_user_meta( $current_user->ID, 'c_inn', $user_inn );
       }
+
+      /*if(!$user_agreement) {
+        custom_errors()->add('no_agreement', 'Нужно согласиться с политикой конфиденциальности');
+      }*/
 
       $errors = custom_errors()->get_error_messages();
 

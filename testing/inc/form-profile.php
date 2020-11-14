@@ -9,7 +9,7 @@
     if(is_user_logged_in()) {
       $output = custom_profile_form_fields();
     } else {
-      $output = '<p style="text-align: center; color: #166529;">Сначала нужно войти :)</p>';
+      $output = '<p class="login-error">Сначала нужно <a href="'. $url_login .'">войти</a></p>';
     }
     return $output;
   }
@@ -455,12 +455,16 @@
                 <?= $current_user->c_inn; ?>
               </span>
             </div>
-            <button type="button" class="p-profile__contacts-button">
-              <svg class="p-profile__contacts-button-icon">
-                <use href="<?= get_template_directory_uri(); ?>/assets/img/sprite.svg#edit"></use>
-              </svg>
-              Редактировать
-            </button>
+
+            <?php if( $current_user->c_patronymic ) : ?>
+              <button type="button" class="p-profile__contacts-button">
+                <svg class="p-profile__contacts-button-icon">
+                  <use href="<?= get_template_directory_uri(); ?>/assets/img/sprite.svg#edit"></use>
+                </svg>
+                Редактировать
+              </button>
+            <?php endif; ?>
+
           </div>
 
           <form 
@@ -542,46 +546,105 @@
               <label class="form__label">
                 <span class="form__label-text">Целевая группа:</span>
                 <select class="form__input" name="user_group" required>
-                  <option value="" label="<?= $current_user->c_group; ?>"></option>
                   <option 
-                    value="group_1" 
-                    label="действующие предприниматели">
+                    value="group_1"
+                    <? 
+                      if ($current_user->c_group === 'group_1') {
+                        echo 'selected="selected"';
+                      }
+                    ?>
+                  >
+                    действующие предприниматели
                   </option>
                   <option 
-                    value="group_2" 
-                    label="школьники">
+                    value="group_2"
+                    <? 
+                      if ($current_user->c_group === 'group_2') {
+                        echo 'selected="selected"';
+                      }
+                    ?>
+                  >
+                    школьники
                   </option>
                   <option 
-                    value="group_3" 
-                    label="лица в возрасте до 30 лет, в том числе студенты">
+                    value="group_3"
+                    <? 
+                      if ($current_user->c_group === 'group_3') {
+                        echo 'selected="selected"';
+                      }
+                    ?>
+                  >
+                    лица в возрасте до 30 лет, в том числе студенты
                   </option>
                   <option 
-                    value="group_4" 
-                    label="инвалиды">
+                    value="group_4"
+                    <? 
+                      if ($current_user->c_group === 'group_4') {
+                        echo 'selected="selected"';
+                      }
+                    ?>
+                  >
+                    инвалиды
                   </option>
                   <option 
-                    value="group_5" 
-                    label="выпускники и воспитанники детских домов">
+                    value="group_5"
+                    <? 
+                      if ($current_user->c_group === 'group_5') {
+                        echo 'selected="selected"';
+                      }
+                    ?>
+                  >
+                    выпускники и воспитанники детских домов
                   </option>
                   <option 
-                    value="group_6" 
-                    label="женщины">
+                    value="group_6"
+                    <? 
+                      if ($current_user->c_group === 'group_6') {
+                        echo 'selected="selected"';
+                      }
+                    ?>
+                  >
+                    женщины
                   </option>
                   <option 
-                    value="group_7" 
-                    label="военнослужащие, уволенные в запас">
+                    value="group_7"
+                    <? 
+                      if ($current_user->c_group === 'group_7') {
+                        echo 'selected="selected"';
+                      }
+                    ?>
+                  >
+                    военнослужащие, уволенные в запас
                   </option>
                   <option 
-                    value="group_8" 
-                    label="лица старше 45 лет">
+                    value="group_8"
+                    <? 
+                      if ($current_user->c_group === 'group_8') {
+                        echo 'selected="selected"';
+                      }
+                    ?>
+                  >
+                    лица старше 45 лет
                   </option>
                   <option 
-                    value="group_9" 
-                    label="безработные">
+                    value="group_9"
+                    <? 
+                      if ($current_user->c_group === 'group_9') {
+                        echo 'selected="selected"';
+                      }
+                    ?>
+                  >
+                    безработные
                   </option>
                   <option 
-                    value="group_10" 
-                    label="иная">
+                    value="group_10"
+                    <? 
+                      if ($current_user->c_group === 'group_10') {
+                        echo 'selected="selected"';
+                      }
+                    ?>
+                  >
+                    иная
                   </option>
                 </select>
               </label>
@@ -703,40 +766,7 @@
       }
 
       if ( !empty($user_group) ) {
-        $group;
-        switch ($user_group) {
-          case 'group_1':
-            $group = 'действующие предприниматели';
-            break;
-          case 'group_2':
-            $group = 'школьники';
-            break;
-          case 'group_3':
-            $group = 'лица в возрасте до 30 лет, в том числе студенты';
-            break;
-          case 'group_4':
-            $group = 'инвалиды';
-            break;
-          case 'group_5':
-            $group = 'выпускники и воспитанники детских домов';
-            break;
-          case 'group_6':
-            $group = 'женщины';
-            break;
-          case 'group_7':
-            $group = 'военнослужащие, уволенные в запас';
-            break;
-          case 'group_8':
-            $group = 'лица старше 45 лет';
-            break;
-          case 'group_9':
-            $group = 'безработные';
-            break;
-          case 'group_10':
-            $group = 'иная';
-            break;
-        }
-        update_user_meta( $current_user->ID, 'c_group', $group );
+        update_user_meta( $current_user->ID, 'c_group', $user_group );
       }
 
       if ( !empty($user_work) ) {
